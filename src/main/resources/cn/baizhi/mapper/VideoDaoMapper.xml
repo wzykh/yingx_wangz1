@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.baizhi.dao.VideoDao">
+    <resultMap id="deo" type="Video">
+        <id column="id" property="id"></id>
+        <result column="title" property="title"></result>
+        <result column="brief" property="brief"></result>
+        <result column="cover_path" property="coverPath"></result>
+        <result column="video_path" property="videoPath"></result>
+        <result column="create_date" property="createDate"></result>
+        <association property="category" javaType="Category">
+            <id column="category_date" property="id"></id>
+            <result column="catename" property="cateName"></result>
+        </association>
+        <association property="user" javaType="User">
+            <id column="uid" property="id"></id>
+            <result column="username" property="username"></result>
+        </association>
+    </resultMap>
+    <select id="qureyPage" resultMap="deo">
+        select video.id,title,video.brief,cover_path,video_path,create_date,category_id,user_id uid,category.catename,user.username from
+        (select id,title,brief,cover_path,video_path,create_date,category_id,user_id from yx_video
+        limit #{start},#{end}) video
+        left join yx_category category
+        on video.category_id=category.id
+        left join yx_user user
+        on video.user_id=user.id
+    </select>
+
+    <!--public Integer countVideo();-->
+    <select id="countVideo" resultType="Integer">
+        select count(*) from yx_video
+    </select>
+
+    <!--public void addVideo(Video video);-->
+    <insert id="addVideo" parameterType="Video">
+        insert into yx_video values (#{id},#{title},#{brief},#{coverPath},#{videoPath},#{createDate},#{category.id},#{user.id,jdbcType=VARCHAR},#{group,jdbcType=VARCHAR})
+    </insert>
+
+    <!--public void deleteVideo(String id);-->
+    <delete id="deleteVideo" parameterType="String">
+        delete from yx_video where id=#{id}
+    </delete>
+</mapper>
